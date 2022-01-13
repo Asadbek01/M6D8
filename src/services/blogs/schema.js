@@ -26,12 +26,13 @@ const blogSchema = new Schema(
     cover: { type: String},
     content: { type: String, required: true },
     readTime: {
-      value: { type: Number, required: true},
-      unit: {type: String, required: true }        
+      value: { type: Number},
+      unit: {type: String }        
   },
   author: {
-      name: {type: String, required: true},
-      avatar: {type: String, required: true}        
+     type: Schema.Types.ObjectId,
+     ref: "Author",
+     required: true       
   },
   content: { type: String, required: true},
   comments: { default: [], type: [CommentSchema] },

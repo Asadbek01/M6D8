@@ -5,6 +5,7 @@ import mongoose from "mongoose"
 
 import blogRouter from "./services/blogs/index.js"
 import commentRouter from "./services/comment/index.js"
+import AuthorRouter from "./services/Authors/index.js"
 import { badRequestHandler, notFoundHandler, genericErrorHandler } from "./errorHandlers.js"
 
 const server = express()
@@ -20,6 +21,7 @@ server.use(express.json())
 
 server.use("/blogs", blogRouter)
 server.use("/comments", commentRouter)
+server.use("/authors", AuthorRouter)
 
 // ******************************** ERROR HANDLERS *********************************
 

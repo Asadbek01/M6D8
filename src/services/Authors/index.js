@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import AuthorModal from '../db-models/userSchema.js'
+import AuthorModal from '../Authors/schema.js'
 import createHttpError from 'http-errors'
 
-const AuthorModal = Router()
+const AuthorRouter = Router()
 
-AuthorModal.get("/", async(req, res, next) => {
+AuthorRouter.get("/", async(req, res, next) => {
     try {
         const author = await AuthorModal.find()
         res.send(author)
@@ -12,7 +12,7 @@ AuthorModal.get("/", async(req, res, next) => {
         next(error)
     }
 })
-AuthorModal.post("/", async (req, res, next) => {
+AuthorRouter.post("/", async (req, res, next) => {
     try {
         const newAuthor = new AuthorModal(req.body)
         newAuthor.save()
@@ -22,7 +22,7 @@ AuthorModal.post("/", async (req, res, next) => {
     }
 })
 
-AuthorModal.get('/:authorId', async (req, res, next) => {
+AuthorRouter.get('/:authorId', async (req, res, next) => {
     try {
         const author = await AuthorModal.findById(req.params.authorId)
         if (!author) return next(createHttpError(404, `The AuthorId ${req.params.authorId} is wrong id`))
@@ -32,7 +32,7 @@ AuthorModal.get('/:authorId', async (req, res, next) => {
         next(error)
     }
 })
-AuthorModal.put('/:authorId', async (req, res, next) => {
+AuthorRouter.put('/:authorId', async (req, res, next) => {
     try {
         const updatedUser = await AuthorModal.findByIdAndUpdate(req.params.authorId, req.body, { new: true })
         if (!updatedUser) returnnext(createHttpError(404, `The AuthorId ${req.params.authorId} is wrong id`))
@@ -41,7 +41,7 @@ AuthorModal.put('/:authorId', async (req, res, next) => {
         next(error)
     }
 })
-AuthorModal.delete('/:authorId', async (req, res, next) => {
+AuthorRouter.delete('/:authorId', async (req, res, next) => {
     try {
         // if (req.params.authorId.length !== 24) return next(createHttpError(404, 'Could not find'))
         const result = await AuthorModal.findByIdAndDelete(req.params.authorId)
@@ -52,4 +52,4 @@ AuthorModal.delete('/:authorId', async (req, res, next) => {
     }
 })
 
-export default userRouter
+export default AuthorRouter
