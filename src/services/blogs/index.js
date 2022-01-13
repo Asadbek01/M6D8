@@ -24,7 +24,7 @@ blogRouter.get("/", async (req, res, next) => {
     .sort(query.options.sort)
     .skip(query.options.skip)
     .limit(query.options.limit)
-    .populate('author')
+    .populate('author', "firstName")
     res.send(blogs)
 } catch (error) {
     next(error)
@@ -39,7 +39,7 @@ blogRouter.get("/:blogId", async (req, res, next) => {
     if (blog) {
       res.send(blog);
     } else {
-      next(createHttpError(404, `Blog with id ${blogId} not found!`));
+      next(createHttpError(404, `The Blog ${blogId} is wrong id`))
     }
   } catch (error) {
     next(error);
