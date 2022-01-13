@@ -72,31 +72,27 @@ blogRouter.delete("/:blogId", async (req, res, next) => {
 
 blogRouter.post("/:blogId/comments", async (req, res, next) => {
   try {
-    const Blogcomment = await BlogPost.findById(req.body.commentId)
-    if (Blogcomment) {
-      const commentToInsert = {
-        ...Blogcomment.toObject(),
-        wrotenDate: new Date(),
-      };
-      console.log(commentToInsert);
-
-      const modifiedBlog = await BlogPost.findByIdAndUpdate(
+    const Blogcomment = await BlogPost.findById(req.params.blogId);
+    if (!Blogcomment) {
+      res
+        .status(404)
+        .send({ message: `Blog with id ${req.params.blogId} not found!` });
+    } else {
+      console.log(req.body);
+      await BlogPost.findByIdAndUpdate(
         req.params.blogId,
-        { $push: { comment: commentToInsert } },
+        {
+          $push: {
+            comments: req.body,
+          },
+        },
         { new: true }
       );
-      if (modifiedBlog) {
-        res.send(modifiedBlog);
-      } else {
-        // next(createHttpError(404, `Blog with id ${req.params.blogId} not found!`))
-      }
-    } else {
-      next(
-        createHttpError(404, `Comment with id ${req.body.commentId} not found!`)
-      );
+      res.status(204).send();
     }
   } catch (error) {
-    next(error);
+    console.log(error);
+    res.send(500).send({ message: error.message });
   }
 });
 
@@ -115,8 +111,34 @@ blogRouter.get("/:blogId/comments", async (req, res, next) => {
   }
 });
 
-blogRouter.get("/", async (req, res, next) => {
+blogRouter.get("/:blogId/comments/commentsId", async (req, res, next) => {
   try {
+    if (req.params.blogId.length !== 24)
+      return next(createHttpError(400, "Invalid Blog ID"));
+    if (req.params.commentId.length !== 24)
+      return next(createHttpError(400, "Invalid Comment ID"));
+    const blogComments = await BlogPost.findById(req.params.blogId, {
+      comments: 1,
+      _id: 0,
+    });
+    if (!blogComments)
+      return next(
+        createHttpError(
+          400,
+          `The id ${req.params.blogId} does not match any blogs`
+        )
+      );
+    const blogComment = blogComments.comments.find(
+      ({ _id }) => _id.toString() === req.params.commentsId
+    );
+    if (!blogComment)
+      return next(
+        createHttpError(
+          400,
+          `The id ${req.params.commentsId} does not match any comments`
+        )
+      );
+    res.send(blogComment);
   } catch (error) {
     next(error);
   }
@@ -129,10 +151,22 @@ blogRouter.put("/", async (req, res, next) => {
   }
 });
 
-blogRouter.delete("/", async (req, res, next) => {
+blogRouter.delete("/:blogId/comments/commentsId", async (req, res, next) => {
   try {
+    const blog = await BlogPost.findById(req.params.blogId);
+    if (!blog) {
+      res.status(404).send({ message: `blog with ${req.params.blogId} is not found!` });
+    } else {
+      await BlogPost.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { comments: { _id: req.params.commentsId } } },
+        { new: true }
+      );
+      res.status(204).send();
+    }
   } catch (error) {
-    next(error);
+    console.log(error);
+    res.send(500).send({ message: error.message });
   }
 });
 
