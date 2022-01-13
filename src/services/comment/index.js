@@ -22,7 +22,7 @@ commentRouter.get("/", async (req, res, next) => {
       .limit(mongoQuery.options.limit || 10)
       .skip(mongoQuery.options.skip || 0)
       .sort(mongoQuery.options.sort)
-    res.send({ links: mongoQuery.links("/books", total), pageTotal: Math.ceil(total / mongoQuery.options.limit), total, books })
+    res.send({ links: mongoQuery.links("/comments", total), pageTotal: Math.ceil(total / mongoQuery.options.limit), total, books })
   } catch (error) {
     next(error)
   }

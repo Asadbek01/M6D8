@@ -21,7 +21,6 @@ const userSchema = new Schema(
     {
      
       text: { type: String, required: true },
-      wrotenDate: { type: Date, required: true },
     },
   ],  
 },
